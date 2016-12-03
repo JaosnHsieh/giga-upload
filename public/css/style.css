@@ -1,0 +1,18 @@
+.header{
+    border-top: 5px solid orange;
+}
+
+.control{
+    margin:50px 0;
+}
+.list{
+    margin:50px 0;
+}
+.list ul{
+    list-style: none;
+}
+
+i{
+        color: #0275d8;
+        cursor:pointer
+}

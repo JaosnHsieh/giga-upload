@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap-flex.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>giga-upload</h1>
+        </div>
+    </div>
+    <div class="control">
+        <div class="container">
+              <form id="picForm" enctype="multipart/form-data" action="/upload" method="post">
+<label class="input-group-btn">
+                    <span class="btn btn-primary">
+                        Choose File  <input  style="display:none;" class="btn-info" onchange="autosubmit()" id="picUpload" type="file" name="pic" accept=""/>
+
+                    </span>
+                </label>
+  
+  <a id="form_output" class="btn btn-danger hidden"></a>
+</form>
+
+            <button class="btn btn-default"><<</button>
+            <button class="btn btn-default">>></button>
+        </div>
+    </div>
+    <div class="list">
+        <div class="container">
+            <ul id="listUl">
+                <!--<li>file.exe<button class="btn btn-danger btn-sm">Delete</button> </li>
+                <li>file.exe<button class="btn btn-danger btn-sm">Delete</button> </li>-->
+            </ul>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/js/bootstrap.js"></script>
+    <script src="js/my.js"></script>
+</body>
+
+</html>
