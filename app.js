@@ -77,7 +77,7 @@ app.get('/api/filesDirs',function(req,res){
 app.post('/upload', function (req, res) {
     var uploadPath = req.query.path
 	var limits = {
-		fileSize: 300 * 1024 * 1024
+		fileSize: 500 * 1024 * 1024
 	}; // 0.5MB
 
 	var options = multer.diskStorage({
