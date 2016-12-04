@@ -3,12 +3,14 @@ String.prototype.replaceAll = function (search, replacement) {
     return target.split(search).join(replacement);
 };
 
+var rootPath,currentPath;
+
+
 getAndRefresh('','folder');
 
 function deleteFile(path,abPath){
-    console.log('this is path: ',path);
-
-    // console.log('replaced ',path.replaceAll('\\','\\\\'));
+        console.log('delete path',path);
+        console.log('delete abPath ',abPath);
          $.ajax({
       type:"DELETE",
       url: "/delete",
@@ -17,18 +19,29 @@ function deleteFile(path,abPath){
       },
       datatype:"json",
       success:function(data){
-        console.log('-----------',path,abPath);
         getAndRefresh(abPath,'folder');
+             $("#form_output").removeClass('alert-danger');
+            $("#form_output").addClass('alert-success');
+             $("#form_output").html("Delete Success!!").fadeIn(1000);
+            $("#form_output").fadeOut(1000);
       },
       complete: function () {
       },
       error: function (xhr, ajaxOptions, thrownError) {
-          console.log('error');
+             $("#form_output").removeClass('alert-success');
+                $("#form_output").addClass('alert-danger');
+               $("#form_output").html("Delete Error!!").fadeIn(1000);
+                $("#form_output").fadeOut(1000);
           console.log(xhr.responseText);
       }
   });
 }
 function getAndRefresh(path, type) {
+
+    currentPath = path;
+
+
+
     if (type == "folder") {
         $.ajax({
             type: "GET",
@@ -36,12 +49,23 @@ function getAndRefresh(path, type) {
             url: "/api/filesDirs?path=" + (path ? path : ''),
             //datatype: "json",
             success: function (data) {
+                console.log(data);
+                rootPath = data.rootPath;
+                if(!path){
+                    currentPath=data.rootPath;
+                    }
+
+                $("#currentPathText").text(currentPath.replace(rootPath,'\\'));
+
+
 
                 var list = $("#listUl");
                 list.empty();
                 data.files.forEach(function (f) {
                     var abDirPath = (f.substring(0,f.lastIndexOf('\\'))).replaceAll('\\','\\\\');
-                    console.log('abDirPath',abDirPath);
+                    if(abDirPath.indexOf('\\')==-1){
+                        abDirPath+='\\\\';
+                    }
                     var showName = f.substring(f.lastIndexOf('\\') + 1);
                     f = f.replaceAll('\\', '\\\\');
                     list.append('<li><i class="fa fa-file" aria-hidden="true"></i><a href=/static/'+f.substring(f.indexOf("\\\\")+1)+'>'+showName+' </a><button onclick=deleteFile(\''+f+'\',\''+abDirPath+'\') class="btn btn-danger btn-sm">Delete</button> </li>');
@@ -49,9 +73,12 @@ function getAndRefresh(path, type) {
 
                 data.folders.forEach(function (d) {
                     var abDirPath = (d.substring(0,d.lastIndexOf('\\'))).replaceAll('\\','\\\\');
+                        if(abDirPath.indexOf('\\')==-1){
+                        abDirPath+='\\\\';
+                    }
                     var showName = d.substring(d.lastIndexOf('\\') + 1);
                     d = d.replaceAll('\\', '\\\\');
-                    list.append('<li onclick="getAndRefresh(\'' + d + '\',\'folder\');"><i class="fa fa-folder-open" aria-hidden="true"></i><i>' + showName + '</i><button onclick=deleteFile(\''+d+'\',\''+abDirPath+'\') class="btn btn-danger btn-sm">Delete</button> </li>');
+                    list.append('<li ><i class="fa fa-folder-open" aria-hidden="true"></i><i onclick="getAndRefresh(\'' + d + '\',\'folder\');">' + showName + '</i> <button onclick=deleteFile(\''+d+'\',\''+abDirPath+'\') class="btn btn-danger btn-sm">Delete</button></li> ');
 
                 });
 
@@ -66,6 +93,7 @@ function getAndRefresh(path, type) {
     }
     // type is file
     else{
+        console.log(123465);
         getAndRefresh(path,'folder');
     }
 };
@@ -73,24 +101,40 @@ function getAndRefresh(path, type) {
 
 
 
+//backToBtn
+$("#backToBtn").on('click',function(){
+    if(currentPath!=rootPath){
 
+        var backPath = currentPath.substring(0,currentPath.lastIndexOf('\\'));
+        if(backPath.indexOf('\\')==-1){
+            backPath= rootPath;
+        }
+        
+        currentPath = backPath;
+        
+        console.log('backpath',backPath);
+        getAndRefresh(backPath,'folder');
 
-
-
+    }
+});
+//backToBtn end
 
 //file
 
     function autosubmit() {
+
         $("#picForm").submit();
+        $("#fileInput").val("");
     }
     $('#picForm').on('submit', function(e) {
+
     var formElem = $("#picForm");
     var formdata = new FormData(formElem[0]);
 
         e.preventDefault();
         $.ajax({
             
-            url : '/upload',
+            url : '/upload?path='+currentPath,
             type: "POST",
             processData: false,
             contentType: false,
@@ -98,12 +142,20 @@ function getAndRefresh(path, type) {
             // data: $(this).serialize(),
             mimeType: 'multipart/form-data',
             success: function (data) {
-                $("#form_output").html("Upload Success!!").removeClass('hidden').fadeOut(5000);
+                getAndRefresh(currentPath,'folder');
+                $("#form_output").removeClass('alert-danger');
+                $("#form_output").addClass('alert-success');
+                $("#form_output").html("Upload Success!!").fadeIn(1000);
+                $("#form_output").fadeOut(1000);
+
                 d = new Date();
             },
             error: function (jXHR, textStatus, errorThrown) {
-				console.log(textStatus,errorThrown);
-                $("#form_output").html(jXHR.responseText);
+                $("#form_output").removeClass('alert-success');
+                $("#form_output").addClass('alert-danger');
+                $("#form_output").html(jXHR.responseText).fadeIn(1000);
+                $("#form_output").fadeOut(1000);
+
             }
         });
     });

@@ -11,6 +11,9 @@
 .list ul{
     list-style: none;
 }
+.list ul>li{
+    margin-bottom: 10px;
+    }
 
 i{
         color: #0275d8;

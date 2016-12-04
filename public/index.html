@@ -2,8 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Document</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Giga-upload</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.5/css/bootstrap-flex.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -17,19 +19,19 @@
     </div>
     <div class="control">
         <div class="container">
-              <form id="picForm" enctype="multipart/form-data" action="/upload" method="post">
-<label class="input-group-btn">
+            <h1 id="currentPathText"></h1>
+            <div id="form_output" class="alert alert-danger" style="display:none;">
+                <strong>Danger!</strong> Indicates a dangerous or potentially negative action.
+            </div>
+            <form id="picForm" enctype="multipart/form-data" action="/upload" method="post">
+                <label class="input-group-btn">
                     <span class="btn btn-primary">
-                        Choose File  <input  style="display:none;" class="btn-info" onchange="autosubmit()" id="picUpload" type="file" name="pic" accept=""/>
+                        Choose File  <input  id="fileInput" style="display:none;" class="btn-info" onchange="autosubmit()" id="picUpload" type="file" name="pic" accept=""/>
 
                     </span>
                 </label>
-  
-  <a id="form_output" class="btn btn-danger hidden"></a>
-</form>
-
-            <button class="btn btn-default"><<</button>
-            <button class="btn btn-default">>></button>
+            </form>
+            <button class="btn btn-default" id="backToBtn"><<</button>
         </div>
     </div>
     <div class="list">

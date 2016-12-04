@@ -65,6 +65,7 @@ app.get('/api/filesDirs',function(req,res){
             
             res.json(
                 {
+                    rootPath:rootPath,
                     files:fileArr,
                     folders:folderArr
                 }
@@ -76,31 +77,38 @@ app.get('/api/filesDirs',function(req,res){
 app.post('/upload', function (req, res) {
     var uploadPath = req.query.path
 	var limits = {
-		fileSize: 0.5 * 1024 * 1024
+		fileSize: 300 * 1024 * 1024
 	}; // 0.5MB
 
 	var options = multer.diskStorage({
 		destination: uploadPath,
 		filename: function (req, file, cb) {
-			var extName = path.extname(file.originalname);
-			cb(null, file.originalname.replace(extName, "") + '-' + Date.now() + extName);
+            if( fs.existsSync(uploadPath+'\\'+file.originalname) ) {
+                req.err = 'The file exists';
+            }
+			cb(null, file.originalname);
 		}
 	});
 
-
 	var upload = multer({
-		storage: options,
-		limits: limits
-	}).single('pic'); // single('這個字串要和前端fileupload input的name屬性一樣')
+		        storage: options,
+		        limits: limits
+	            }).single('pic'); // single('這個字串要和前端fileupload input的name屬性一樣')
 	upload(req, res, function (err) {
 		if (err) {
-			res.status(500).send('File too large!!')
-			return
+			res.status(500).send('File too large!!');
+			return;
 		}
 
-		res.end('You new avatar is uploaded')
+        if(req.err){
+            res.status(500).send(req.err);
+            console.log('files exists 222 ');
+            return;
+        }
+
+		res.end('You new avatar is uploaded');
 			// Everything went fine
-	})
+	});
 });
 
 app.get('/',function(req,res){
@@ -109,24 +117,21 @@ app.get('/',function(req,res){
 
 
 
-
 app.delete('/delete',function(req,res){
-    console.log('delete');
     var deletePath = req.body.path;
    // console.log(deletePath);
     if(fs.lstatSync(deletePath).isDirectory()){
-        var deleteFolderRecursive = function(path) {
-            console.log(path);
-            if( fs.existsSync(path) ) {
-                fs.readdirSync(path).forEach(function(file,index){
-                var curPath = path + "/" + file;
+        var deleteFolderRecursive = function(p) {
+            if( fs.existsSync(p) ) {
+                fs.readdirSync(p).forEach(function(file,index){
+                var curPath = path.join(p,file);
                 if(fs.lstatSync(curPath).isDirectory()) { // recurse
                     deleteFolderRecursive(curPath);
                 } else { // delete file
                     fs.unlinkSync(curPath);
                 }
                 });
-                fs.rmdirSync(path);
+                fs.rmdirSync(p);
             }
         };
         try{
@@ -148,6 +153,44 @@ app.delete('/delete',function(req,res){
         })
     }
 });
+
+// app.delete('/delete',function(req,res){
+//     var deletePath = req.body.path;
+//    // console.log(deletePath);
+//     if(fs.lstatSync(deletePath).isDirectory()){
+//         var deleteFolderRecursive = function(path) {
+//             console.log(path);
+//             if( fs.existsSync(path) ) {
+//                 fs.readdirSync(path).forEach(function(file,index){
+//                 var curPath = path + "/" + file;
+//                 if(fs.lstatSync(curPath).isDirectory()) { // recurse
+//                     deleteFolderRecursive(curPath);
+//                 } else { // delete file
+//                     fs.unlinkSync(curPath);
+//                 }
+//                 });
+//                 fs.rmdirSync(path);
+//             }
+//         };
+//         try{
+//             deleteFolderRecursive(deletePath);
+//             res.send('Delete Success');
+//         }catch(err){
+//             res.send(err);
+//         }
+        
+//     }else{
+//         fs.unlink(deletePath,function(err){
+//             if(err)
+//                 {
+//                 console.log('||||||||||||||||||||||||||||||||||||||||||');
+//                 res.send(err);
+//                 }
+//             else
+//                 res.send('Delete Success');
+//         })
+//     }
+// });
 
 
 var port = 8080;
