@@ -13,3 +13,10 @@ cd giga-upload
 npm install
 node app [path]
 ```
+
+# how to use vai npm by 2016.12.06
+```
+npm install -g giga-upload
+giga-upload C:\
+
+```
